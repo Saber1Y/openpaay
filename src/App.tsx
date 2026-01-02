@@ -1,8 +1,8 @@
-import { Main } from './components/cards/main'
+import { AuthPage } from './components/AuthPage'
 
 function App() {
   return (
-    <Main />
+    <AuthPage />
   )
 }
 
