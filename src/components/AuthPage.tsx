@@ -1,52 +1,112 @@
-import { useState } from 'react'
-import { useEmailAuth, useOAuth, OAuthProvider } from '@openfort/react'
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  useEmailAuth,
+  useGuestAuth,
+  useOAuth,
+  useUser,
+  OAuthProvider,
+} from "@openfort/react";
 
 export function AuthPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isSignUp, setIsSignUp] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  // const [userName, setUserName] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
-  const { signInEmail, signUpEmail, isLoading: emailLoading } = useEmailAuth()
-  const { initOAuth, isLoading: oauthLoading } = useOAuth()
+  const { signInEmail, signUpEmail, isLoading: emailLoading } = useEmailAuth();
+  const { signUpGuest, isLoading: guestLoading } = useGuestAuth();
+  const { initOAuth, isLoading: oauthLoading } = useOAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
+
+  const tryGuestLogin = async () => {
+    try {
+      const { user } = await signUpGuest();
+      console.log("Guest user created:", user);
+    } catch (error) {
+      console.error("Guest login error:", error);
+      setMessage({
+        type: "error",
+        text: error.message || "Guest login failed",
+      });
+    }
+  };
 
   const handleEmailAuth = async () => {
-    setMessage(null)
+    setMessage(null);
     try {
-      const result = isSignUp 
-        ? await signUpEmail({ email, password })
-        : await signInEmail({ email, password })
+      const result = isSignUp
+        ? await signUpEmail({
+            email,
+            password,
+            emailVerificationRedirectTo:
+              window.location.origin + "/auth/callback",
+          })
+        : await signInEmail({
+            email,
+            password,
+            emailVerificationRedirectTo:
+              window.location.origin + "/auth/callback",
+          });
 
       if (result.requiresEmailVerification) {
-        setMessage({ 
-          type: 'success', 
-          text: 'Please check your inbox for a verification code' 
-        })
+        setMessage({
+          type: "success",
+          text: "Please check your inbox for a verification link",
+        });
       } else if (result.error) {
-        setMessage({ 
-          type: 'error', 
-          text: result.error.message || 'Authentication failed' 
-        })
+        setMessage({
+          type: "error",
+          text: result.error.message || "Authentication failed",
+        });
       }
     } catch (error: any) {
-      setMessage({ 
-        type: 'error', 
-        text: error.message || 'An error occurred' 
-      })
+      setMessage({
+        type: "error",
+        text: error.message || "An error occurred",
+      });
     }
-  }
+  };
 
-  const handleGoogleLogin = () => {
-    initOAuth({ provider: OAuthProvider.GOOGLE })
+  const handleGoogleLogin = async () => {
+    try {
+      await initOAuth({ provider: OAuthProvider.GOOGLE });
+    } catch (error: any) {
+      console.error("Google OAuth error:", error);
+      setMessage({
+        type: "error",
+        text: error.message || "Google login failed",
+      });
+    }
+  };
+
+  if (oauthLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-gray-600">Completing Google sign-in...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            OpenPay
-          </h1>
+          <h1 className="text-3xl font-bold text-black">OpenPay</h1>
           <p className="text-sm text-gray-500 mt-2">
             Gasless USDC Micro-Payments
           </p>
@@ -57,9 +117,13 @@ export function AuthPage() {
             Welcome! Sign in to start sending payments
           </p>
 
+
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Email
               </label>
               <input
@@ -74,7 +138,10 @@ export function AuthPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Password
               </label>
               <input
@@ -92,9 +159,13 @@ export function AuthPage() {
               type="button"
               onClick={handleEmailAuth}
               disabled={emailLoading || oauthLoading || !email || !password}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {emailLoading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+              {emailLoading
+                ? "Processing..."
+                : isSignUp
+                ? "Sign Up"
+                : "Sign In"}
             </button>
 
             <button
@@ -102,7 +173,9 @@ export function AuthPage() {
               onClick={() => setIsSignUp(!isSignUp)}
               className="w-full text-sm text-blue-600 hover:text-blue-700 transition"
             >
-              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+              {isSignUp
+                ? "Already have an account? Sign In"
+                : "Don't have an account? Sign Up"}
             </button>
           </div>
         </div>
@@ -118,11 +191,27 @@ export function AuthPage() {
 
         <button
           type="button"
+          onClick={tryGuestLogin}
+          disabled={guestLoading}
+          className="w-full mb-4 flex items-center justify-center gap-3 bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Continue as Guest"
+        >
+          Continue as Guest
+        </button>
+
+        <button
+          type="button"
           onClick={handleGoogleLogin}
           disabled={oauthLoading || emailLoading}
           className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Sign in with Google"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" aria-label="Google logo" role="img">
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 24 24"
+            aria-label="Google logo"
+            role="img"
+          >
             <title>Google Logo</title>
             <path
               fill="#4285F4"
@@ -147,9 +236,9 @@ export function AuthPage() {
         {message && (
           <div
             className={`mt-6 p-4 rounded-lg text-sm ${
-              message.type === 'success' 
-                ? 'bg-green-50 text-green-800 border border-green-200' 
-                : 'bg-red-50 text-red-800 border border-red-200'
+              message.type === "success"
+                ? "bg-green-50 text-green-800 border border-green-200"
+                : "bg-red-50 text-red-800 border border-red-200"
             }`}
           >
             {message.text}
@@ -161,5 +250,5 @@ export function AuthPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

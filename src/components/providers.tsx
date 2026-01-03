@@ -1,7 +1,7 @@
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { createConfig, WagmiProvider } from 'wagmi';
 
-import { getDefaultConfig, OpenfortProvider, type Theme } from "@openfort/react";
+import { getDefaultConfig, OpenfortProvider, type Theme, AuthProvider } from "@openfort/react";
 import { beamTestnet, polygonAmoy } from 'viem/chains';
 import { useState } from 'react';
 
@@ -30,11 +30,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
             createEncryptedSessionEndpoint: import.meta.env.VITE_CREATE_ENCRYPTED_SESSION_ENDPOINT, // The endpoint to create an encryption session for automatic wallet recovery
 
-            recoverWalletAutomaticallyAfterAuth: false, // We will manually call create/setActive wallet after auth
+            recoverWalletAutomaticallyAfterAuth: true, // Automatically create wallet after auth
           }}
 
           uiConfig={{
             theme: import.meta.env.VITE_OPENFORT_THEME as Theme,
+            authProviders: [
+              AuthProvider.EMAIL,
+              AuthProvider.GOOGLE,
+            ],
           }}
         >
           <>
