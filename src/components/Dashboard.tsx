@@ -1,29 +1,36 @@
 import { useUser, useSignOut } from "@openfort/react";
-import { useAccount } from "wagmi";
+// import { useAccount } from "wagmi";
 import { useWallets } from "@openfort/react";
 import { useUI } from "@openfort/react";
+import { RecoveryMethod } from "@openfort/react";
 
 export function Dashboard() {
   const { openProviders, openWallets } = useUI();
   const { user } = useUser();
   const { signOut, isLoading } = useSignOut();
-  const { address } = useAccount();
+  // const { address } = useAccount();
 
-  const { activeWallet, wallets } = useWallets();
+  const {
+    activeWallet,
+    wallets,
+    isCreating,
+    createWallet,
+    error: walletError,
+  } = useWallets();
+
+  console.log("Dashboard Debug:", {
+    user,
+    activeWallet,
+    wallets,
+    isCreating,
+    walletError,
+    walletCount: wallets?.length,
+  });
 
   const handleLogout = async () => {
-    console.log("Logging out...");
-    console.log("User before logout:", user);
-
     try {
       await signOut();
       console.log("signOut() completed");
-
-      localStorage.clear();
-      sessionStorage.clear();
-
-      console.log("Cleared storage, redirecting...");
-      window.location.href = "/";
     } catch (error) {
       console.error("Logout error:", error);
     }
@@ -41,12 +48,27 @@ export function Dashboard() {
               <p className="text-gray-600 mt-2">Welcome back!</p>
             </div>
             <div className="flex items-center gap-4">
-              {address && (
+              {activeWallet ? (
                 <button
+                  type="button"
                   onClick={openWallets}
                   className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                 >
-                  Wallet: {address.slice(0, 6)}…{address.slice(-4)}
+                  Wallet: {activeWallet.address.slice(0, 6)}…
+                  {activeWallet.address.slice(-4)}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() =>
+                    createWallet({
+                      recovery: { recoveryMethod: RecoveryMethod.PASSKEY },
+                    })
+                  }
+                  disabled={isCreating}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                >
+                  {isCreating ? "Creating..." : "Create Wallet (Passkey)"}
                 </button>
               )}
               <button
@@ -74,6 +96,22 @@ export function Dashboard() {
                     User ID: {user.id}
                   </span>
                 </p>
+                <p>
+                  <span className="font-medium text-black">
+                    Wallets count: {wallets?.length || 0}
+                  </span>
+                </p>
+                <p>
+                  <span className="font-medium text-black">
+                    Wallet Address:{" "}
+                    {activeWallet?.address || "No wallet created yet"}
+                  </span>
+                </p>
+                {walletError && (
+                  <p className="text-red-500">
+                    Wallet Error: {walletError.message}
+                  </p>
+                )}
               </div>
             </div>
           )}

@@ -6,6 +6,13 @@ import { useUser } from "@openfort/react";
 function App() {
   const { user } = useUser();
 
+  console.log("App - User state:", {
+    user,
+    userExists: !!user,
+    userId: user?.id,
+    route: window.location.pathname
+  });
+
   return (
     <BrowserRouter>
       <Routes>

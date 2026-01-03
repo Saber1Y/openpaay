@@ -1,16 +1,14 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   useEmailAuth,
   useGuestAuth,
   useOAuth,
-  useUser,
   OAuthProvider,
 } from "@openfort/react";
+import { useNavigate } from "react-router-dom";
+
 
 export function AuthPage() {
-  const navigate = useNavigate();
-  const { user } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const [userName, setUserName] = useState("");
@@ -23,12 +21,7 @@ export function AuthPage() {
   const { signInEmail, signUpEmail, isLoading: emailLoading } = useEmailAuth();
   const { signUpGuest, isLoading: guestLoading } = useGuestAuth();
   const { initOAuth, isLoading: oauthLoading } = useOAuth();
-
-  useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
+  const navigate = useNavigate();
 
   const tryGuestLogin = async () => {
     try {
@@ -44,44 +37,46 @@ export function AuthPage() {
   };
 
   const handleEmailAuth = async () => {
-    setMessage(null);
     try {
-      const result = isSignUp
-        ? await signUpEmail({
-            email,
-            password,
-            emailVerificationRedirectTo:
-              window.location.origin + "/auth/callback",
-          })
-        : await signInEmail({
-            email,
-            password,
-            emailVerificationRedirectTo:
-              window.location.origin + "/auth/callback",
-          });
+      setMessage(null);
 
-      if (result.requiresEmailVerification) {
-        setMessage({
-          type: "success",
-          text: "Please check your inbox for a verification link",
+      if (isSignUp) {
+        console.log("Starting sign up...");
+        const { error, requiresEmailVerification } = await signUpEmail({
+          email,
+          password,
         });
-      } else if (result.error) {
-        setMessage({
-          type: "error",
-          text: result.error.message || "Authentication failed",
-        });
+
+        if (error) {
+          console.error("Sign up error:", error);
+          return setMessage({ type: "error", text: error.message });
+        }
+        if (requiresEmailVerification) {
+          console.log("Email verification required");
+          return setMessage({ type: "success", text: "Verify your email" });
+        }
       }
-    } catch (error: any) {
-      setMessage({
-        type: "error",
-        text: error.message || "An error occurred",
-      });
+
+      console.log("Starting sign in with:", email);
+      const { error: signInError } = await signInEmail({ email, password });
+
+      if (signInError) {
+        console.error("Sign in error:", signInError);
+        setMessage({ type: "error", text: signInError.message });
+        return;
+      }
+
+      console.log("Sign in successful, navigating to dashboard...");
+      navigate("/dashboard", { replace: true });
+    } catch (err: any) {
+      console.error("Auth error:", err);
+      setMessage({ type: "error", text: err.message || "Auth failed" });
     }
   };
-
   const handleGoogleLogin = async () => {
     try {
       await initOAuth({ provider: OAuthProvider.GOOGLE });
+      navigate("/dashboard", { replace: true });
     } catch (error: any) {
       console.error("Google OAuth error:", error);
       setMessage({
@@ -116,7 +111,6 @@ export function AuthPage() {
           <p className="text-center text-gray-600 mb-6">
             Welcome! Sign in to start sending payments
           </p>
-
 
           <div className="space-y-4">
             <div>
