@@ -3,17 +3,17 @@ import { useUser, useSignOut } from "@openfort/react";
 import { useWallets } from "@openfort/react";
 import { useUI } from "@openfort/react";
 import { RecoveryMethod } from "@openfort/react";
-import { useReadContract, useAccount } from "wagmi";
+import { useReadContract, useAccount, useBalance } from "wagmi";
 import { formatUnits } from "viem";
 import { baseSepolia } from "viem/chains";
 import { useState } from "react";
 import { SendUsdcModal } from "./SendUsdcModal";
 
-  export function Dashboard() {
+export function Dashboard() {
   const { openWallets } = useUI();
   const { user } = useUser();
   const { signOut, isLoading } = useSignOut();
-  const { chain, address: wagmiAddress, isConnected } = useAccount();
+  const { chain } = useAccount();
   const [sendModalOpen, setSendModalOpen] = useState(false);
 
   const {
@@ -44,24 +44,34 @@ import { SendUsdcModal } from "./SendUsdcModal";
     args: activeWallet?.address
       ? [activeWallet.address as `0x${string}`]
       : undefined,
+    chainId: baseSepolia.id,
     query: {
       enabled: !!activeWallet?.address,
     },
   });
 
+  const { data: ethBalance } = useBalance({
+    address: activeWallet?.address as `0x${string}`,
+    chainId: baseSepolia.id,
+    query: {
+      enabled: !!activeWallet?.address,
+    },
+  });
+
+  console.log(baseSepolia);
+
   const formattedBalance = usdcBalance
     ? Number(formatUnits(usdcBalance, 6)).toFixed(2)
     : "0.00";
 
-  console.log("usdc balance", usdcBalance);
+  const formattedEthBalance = ethBalance
+    ? Number(formatUnits(ethBalance?.value, 18)).toFixed(4)
+    : "0.0000";
 
   console.log("Dashboard Debug:", {
     user,
     activeWallet,
     activeWalletAddress: activeWallet?.address,
-    wagmiAddress,
-    isConnected,
-    addressesMatch: wagmiAddress?.toLowerCase() === activeWallet?.address?.toLowerCase(),
     wallets,
     isCreating,
     walletError,
@@ -132,18 +142,11 @@ import { SendUsdcModal } from "./SendUsdcModal";
               </h2>
               <div className="mb-2 text-sm">
                 <span className="text-gray-600">Network: </span>
-                <span className="font-bold">{chain?.name || 'Not detected'}</span>
-                {!isConnected && <span className="text-red-600 ml-2">(Wagmi not connected)</span>}
+                <span className="font-bold text-blue-600 text-lg">
+                  Base Sepolia
+                </span>
               </div>
-              <div className="mb-2 text-xs text-gray-500">
-                <div>Wagmi Address: {wagmiAddress?.slice(0, 6)}...{wagmiAddress?.slice(-4)}</div>
-                <div>Openfort Address: {activeWallet?.address?.slice(0, 6)}...{activeWallet?.address?.slice(-4)}</div>
-                {wagmiAddress?.toLowerCase() === activeWallet?.address?.toLowerCase() ? (
-                  <div className="text-green-600">✓ Addresses match</div>
-                ) : (
-                  <div className="text-red-600">✗ Addresses do not match</div>
-                )}
-              </div>
+
               <div className="space-y-2">
                 <p>
                   {/* <span className="font-medium">Email:</span> {user.email} */}
@@ -180,6 +183,16 @@ import { SendUsdcModal } from "./SendUsdcModal";
             </div>
             <p className="text-gray-600 mt-2">
               Testnet balance on Base Sepolia
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4">ETH Balance (Gas)</h2>
+            <div className="text-4xl font-bold text-blue-600">
+              {isBalanceLoading ? "Loading..." : `${formattedEthBalance} ETH`}
+            </div>
+            <p className="text-gray-600 mt-2">
+              Native gas token on Base Sepolia
             </p>
           </div>
 
