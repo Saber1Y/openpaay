@@ -67,7 +67,14 @@ export function SendUsdcModal({ open, onClose }: { open: boolean; onClose: () =>
         )}
 
         {isConfirmed && !error && (
-          <p className="text-green-600 text-sm mt-2">Transaction confirmed! ✓</p>
+          <div className="mt-2">
+            <p className="text-green-600 text-sm">Transaction confirmed! ✓</p>
+            {hash && (
+              <p className="text-xs text-gray-600 mt-1 break-all">
+                Hash: {hash}
+              </p>
+            )}
+          </div>
         )}
       </div>
     </Sheet>
