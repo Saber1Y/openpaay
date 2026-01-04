@@ -5,7 +5,7 @@ import { Sheet } from './ui/Sheet';
 export function SendUsdcModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [recipientAddress, setRecipientAddress] = useState('');
   const [amount, setAmount] = useState('');
-  const { sendUsdc, isPending, isConfirmed, error } = useSendUsdc();
+  const { sendUsdc, isPending, isConfirmed, error, hash } = useSendUsdc();
 
   const handleSend = async () => {
     try {
