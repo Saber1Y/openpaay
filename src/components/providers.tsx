@@ -7,13 +7,13 @@ import {
   type Theme,
   AuthProvider,
 } from "@openfort/react";
-import { beamTestnet, polygonAmoy } from "viem/chains";
+import { baseSepolia } from "viem/chains";
 import { useState } from "react";
 
 const config = createConfig(
   getDefaultConfig({
     appName: "Openfort Next.js demo",
-    chains: [beamTestnet, polygonAmoy], // The chains you want to support
+    chains: [baseSepolia], // The chains you want to support
     walletConnectProjectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID, // The WalletConnect Project ID
   })
 );
@@ -30,14 +30,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
           walletConfig={{
             shieldPublishableKey: import.meta.env.VITE_SHIELD_PUBLISHABLE_KEY!, // The public key for your Openfort Shield account get it from https://dashboard.openfort.io
 
-            // Uncomment these lines after fixing CORS issue on Vercel endpoint
-           
-            // ethereumProviderPolicyId: import.meta.env.VITE_POLICY_ID, // The policy ID for sponsoring transactions
-            // createEncryptedSessionEndpoint: import.meta.env.VITE_CREATE_ENCRYPTED_SESSION_ENDPOINT, // The endpoint to create an encryption session for automatic wallet recovery
-            // recoverWalletAutomaticallyAfterAuth: true, // Automatically create wallet after auth
+            // Gas sponsorship policy configuration
+            ethereumProviderPolicyId: import.meta.env.VITE_POLICY_ID, // The policy ID for sponsoring transactions
+            createEncryptedSessionEndpoint: import.meta.env
+              .VITE_CREATE_ENCRYPTED_SESSION_ENDPOINT, // The endpoint to create an encryption session for automatic wallet recovery
+            recoverWalletAutomaticallyAfterAuth: true, // Automatically create wallet after auth
           }}
-
-           uiConfig={{
+          uiConfig={{
             theme: import.meta.env.VITE_OPENFORT_THEME as Theme,
             authProviders: [AuthProvider.EMAIL, AuthProvider.GOOGLE],
           }}

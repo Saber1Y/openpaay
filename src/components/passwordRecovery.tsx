@@ -47,28 +47,32 @@ export const CreateWalletPasswordSheet = ({ open, onClose, onCreateWallet }: Cre
             <span>If you lose this password, you will not be able to access your wallet</span>
           </div>
         </div>
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter your wallet's password"
-          className="w-full mt-2 p-2 border border-gray-300 rounded"
-        />
-        {
-          error && (
-            <span className="text-red-500 text-sm mt-2">
-              {error?.message}
-            </span>
-          )
-        }
-        <button
-          className="mt-4 w-full bg-zinc-700 text-white p-2 rounded cursor-pointer"
-          type="submit"
-          disabled={isCreating}
-        >
+          <label htmlFor="wallet-password" className="block text-sm font-medium mb-2 text-black">
+            Password
+          </label>
+          <input
+            id="wallet-password"
+            type="password"
+            name="password"
+            placeholder="Enter your wallet's password"
+            className="w-full mt-2 p-2 border border-gray-300 rounded"
+          />
           {
-            isCreating ? "Creating wallet..." : "Create Wallet"
+            error && (
+              <span className="text-red-500 text-sm mt-2">
+                {error?.message}
+              </span>
+            )
           }
-        </button>
+          <button
+            className="mt-4 w-full bg-zinc-700 text-white p-2 rounded cursor-pointer"
+            type="submit"
+            disabled={isCreating}
+          >
+            {
+              isCreating ? "Creating wallet..." : "Create Wallet"
+            }
+          </button>
       </form>
     </Sheet>
   )
@@ -114,28 +118,42 @@ export const WalletRecoverPasswordSheet = ({ open, onClose, wallet }: WalletReco
             <p>Recover wallet {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)} with password</p>
           )
         }
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter your wallet's password"
-          className="w-full mt-2 p-2 border border-gray-300 rounded"
-        />
-        {
-          error && (
-            <span className="text-red-500 text-sm mt-2">
-              {error?.message}
-            </span>
-          )
-        }
-        <button
-          className="mt-4 w-full bg-zinc-700 text-white p-2 rounded cursor-pointer"
-          type="submit"
-          disabled={isConnecting}
-        >
+         <label htmlFor="recover-password" className="block text-sm font-medium mb-2 text-black">
+            Password
+          </label>
+          <input
+            id="recover-password"
+            type="password"
+            name="password"
+            placeholder="Enter your wallet's password"
+            className="w-full mt-2 p-2 border border-gray-300 rounded"
+          />
+          <label htmlFor="recover-password" className="block text-sm font-medium mb-2 text-black">
+            Password
+          </label>
+          <input
+            id="recover-password"
+            type="password"
+            name="password"
+            placeholder="Enter your wallet's password"
+            className="w-full mt-2 p-2 border border-gray-300 rounded"
+          />
           {
-            isConnecting ? "Recovering..." : "Recover Wallet"
+            error && (
+              <span className="text-red-500 text-sm mt-2">
+                {error?.message}
+              </span>
+            )
           }
-        </button>
+          <button
+            type="button"
+            className="mt-4 w-full bg-zinc-700 text-white p-2 rounded cursor-pointer"
+            disabled={isConnecting}
+          >
+            {
+              isConnecting ? "Recovering..." : "Recover Wallet"
+            }
+          </button>
       </form>
     </Sheet>
   )

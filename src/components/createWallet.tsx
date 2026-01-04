@@ -40,6 +40,7 @@ export const CreateWallet = ({
     <>
       <div className="flex flex-col gap-4 wallet-option-group mb-4">
         <button
+          type="button"
           className="wallet-option cursor-pointer"
           onClick={() => createWallet({
             recovery: {
@@ -54,6 +55,7 @@ export const CreateWallet = ({
           </div>
         </button>
         <button
+          type="button"
           className="wallet-option cursor-pointer"
           onClick={() => createWallet({
             recovery: {
@@ -68,6 +70,7 @@ export const CreateWallet = ({
           </div>
         </button>
         <button
+          type="button"
           className="wallet-option cursor-pointer"
           onClick={() => setPasswordSheetOpen(true)}
         >
