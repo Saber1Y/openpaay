@@ -116,6 +116,7 @@ export function Dashboard() {
                   onClick={() =>
                     createWallet({
                       recovery: { recoveryMethod: RecoveryMethod.PASSKEY },
+                      chainId: 84532,
                     })
                   }
                   disabled={isCreating}

@@ -34,7 +34,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             ethereumProviderPolicyId: import.meta.env.VITE_POLICY_ID, // The policy ID for sponsoring transactions
             createEncryptedSessionEndpoint: import.meta.env
               .VITE_CREATE_ENCRYPTED_SESSION_ENDPOINT, // The endpoint to create an encryption session for automatic wallet recovery
-            recoverWalletAutomaticallyAfterAuth: true, // Automatically create wallet after auth
+            recoverWalletAutomaticallyAfterAuth: false, // Automatically create wallet after auth
           }}
           uiConfig={{
             theme: import.meta.env.VITE_OPENFORT_THEME as Theme,
