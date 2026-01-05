@@ -8,6 +8,7 @@ import { formatUnits } from "viem";
 import { baseSepolia } from "viem/chains";
 import { useState } from "react";
 import { SendUsdcModal } from "./SendUsdcModal";
+import { TransactionHistoryModal } from "./TransactionHistoryModal";
 
 export function Dashboard() {
   const { openWallets } = useUI();
@@ -15,6 +16,7 @@ export function Dashboard() {
   const { signOut, isLoading } = useSignOut();
   const { chain } = useAccount();
   const [sendModalOpen, setSendModalOpen] = useState(false);
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   const {
     activeWallet,
@@ -177,8 +179,10 @@ export function Dashboard() {
             </div>
           )}
 
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">USDC Balance</h2>
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4 text-black">
+              USDC Balance
+            </h2>
             <div className="text-4xl font-bold text-green-600">
               {isBalanceLoading ? "Loading..." : `${formattedBalance} USDC`}
             </div>
@@ -187,8 +191,10 @@ export function Dashboard() {
             </p>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">ETH Balance (Gas)</h2>
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50rounded-xl p-6 mb-8">
+            <h2 className="text-xl font-semibold mb-4 text-black">
+              ETH Balance (Gas)
+            </h2>
             <div className="text-4xl font-bold text-blue-600">
               {isBalanceLoading ? "Loading..." : `${formattedEthBalance} ETH`}
             </div>
@@ -198,7 +204,9 @@ export function Dashboard() {
           </div>
 
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6">
-            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+            <h2 className="text-xl font-semibold mb-4 text-black">
+              Quick Actions
+            </h2>
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
@@ -207,23 +215,13 @@ export function Dashboard() {
               >
                 Send USDC
               </button>
+
               <button
                 type="button"
-                className="bg-purple-600 text-white py-4 rounded-xl font-semibold hover:bg-purple-700 transition"
-              >
-                Receive USDC
-              </button>
-              <button
-                type="button"
+                onClick={() => setHistoryModalOpen(true)}
                 className="bg-gray-800 text-white py-4 rounded-xl font-semibold hover:bg-gray-900 transition"
               >
                 Transaction History
-              </button>
-              <button
-                type="button"
-                className="bg-gray-800 text-white py-4 rounded-xl font-semibold hover:bg-gray-900 transition"
-              >
-                Settings
               </button>
             </div>
           </div>
@@ -231,6 +229,11 @@ export function Dashboard() {
           <SendUsdcModal
             open={sendModalOpen}
             onClose={() => setSendModalOpen(false)}
+          />
+
+          <TransactionHistoryModal
+            open={historyModalOpen}
+            onClose={() => setHistoryModalOpen(false)}
           />
         </div>
       </div>

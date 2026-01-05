@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSendUsdc } from '../hooks/useSendUsdc';
-import { Sheet } from './ui/Sheet';
+import { Modal } from './ui/Modal';
 
 export function SendUsdcModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [recipientAddress, setRecipientAddress] = useState('');
@@ -21,7 +21,8 @@ export function SendUsdcModal({ open, onClose }: { open: boolean; onClose: () =>
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title="Send USDC" description="Transfer USDC to another address">
+    <Modal open={open} onClose={onClose} title="Send USDC">
+      <p className="text-gray-600 mb-4">Transfer USDC to another address</p>
       <div className="space-y-4">
         <div>
           <label htmlFor="recipient" className="block text-sm font-medium mb-2 text-black">
@@ -77,6 +78,6 @@ export function SendUsdcModal({ open, onClose }: { open: boolean; onClose: () =>
           </div>
         )}
       </div>
-    </Sheet>
+    </Modal>
   );
 }
