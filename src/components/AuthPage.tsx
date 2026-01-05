@@ -26,11 +26,11 @@ export function AuthPage() {
     try {
       const { user } = await signUpGuest();
       console.log("Guest user created:", user);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Guest login error:", error);
       setMessage({
         type: "error",
-        text: error.message || "Guest login failed",
+        text: (error as Error).message || "Guest login failed",
       });
     }
   };

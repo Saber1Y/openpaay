@@ -1,8 +1,13 @@
-import { useTransactionHistory } from '../hooks/useTransactionHistory';
-import { Modal } from './ui/Modal';
-import { formatUnits } from 'viem';
+import { useTransactionHistory } from "../hooks/useTransactionHistory";
+import { Modal } from "./ui/Modal";
 
-export function TransactionHistoryModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function TransactionHistoryModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const { transactions, isLoading, loadTransactions } = useTransactionHistory();
 
   return (
@@ -15,12 +20,14 @@ export function TransactionHistoryModal({ open, onClose }: { open: boolean; onCl
           disabled={isLoading}
           className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
         >
-          {isLoading ? 'Loading...' : 'Refresh'}
+          {isLoading ? "Loading..." : "Refresh"}
         </button>
 
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {transactions.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">No transactions yet</p>
+            <p className="text-gray-500 text-center py-4">
+              No transactions yet
+            </p>
           ) : (
             transactions.map((tx, index) => (
               <div
@@ -30,7 +37,9 @@ export function TransactionHistoryModal({ open, onClose }: { open: boolean; onCl
                 <div className="flex justify-between items-start mb-2">
                   <span
                     className={`text-xs font-semibold px-2 py-1 rounded ${
-                      tx.type === 'sent' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                      tx.type === "sent"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-green-100 text-green-800"
                     }`}
                   >
                     {tx.type.toUpperCase()}
@@ -46,11 +55,15 @@ export function TransactionHistoryModal({ open, onClose }: { open: boolean; onCl
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">From:</span>
-                    <span className="font-mono text-xs">{tx.from.slice(0, 8)}…{tx.from.slice(-6)}</span>
+                    <span className="font-mono text-xs">
+                      {tx.from.slice(0, 8)}…{tx.from.slice(-6)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">To:</span>
-                    <span className="font-mono text-xs">{tx.to.slice(0, 8)}…{tx.to.slice(-6)}</span>
+                    <span className="font-mono text-xs">
+                      {tx.to.slice(0, 8)}…{tx.to.slice(-6)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Hash:</span>
