@@ -1,2 +1,0 @@
-import{T as p,d as h,e as x,i as g,a as l,n as u}from"./typed-data-DWm5ReBr.js";import{av as e,aw as o}from"./index-8_JFJoco.js";import{t}from"./utf8-Buz2KJNa.js";import"./index-DmwHuDad.js";import"./bn-D9Kp_-TR.js";const r=`Ethereum Signed Message:
-`;function d(a){return typeof a=="string"&&(a=t(a)),e(o([t(r),t(String(a.length)),a]))}export{p as _TypedDataEncoder,h as dnsEncode,x as ensNormalize,d as hashMessage,g as id,l as isValidName,r as messagePrefix,u as namehash};
